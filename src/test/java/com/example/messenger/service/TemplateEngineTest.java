@@ -58,4 +58,18 @@ public class TemplateEngineTest {
 
         assertEquals("Some text: #{tag}!", result);
     }
+
+    @Test
+    void shouldSupportLatin1CharactersInTemplateAndValues() {
+        TemplateEngine engine = new TemplateEngine();
+        String template = "Hola señor #{name}, ¿cómo está? Su símbolo es #{symbol}";
+        Map<String, String> values = Map.of(
+                "name", "Jürgen",
+                "symbol", "©"
+        );
+
+        String result = engine.render(template, values);
+
+        assertEquals("Hola señor Jürgen, ¿cómo está? Su símbolo es ©", result);
+    }
 }
