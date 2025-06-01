@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class TemplateEngineTest {
 
     @Test
-    public void shouldReplacePlaceholderWithValue() {
+    void shouldReplacePlaceholderWithValue() {
         TemplateEngine templateEngine = new TemplateEngine();
         String template = "Hello, #{name}!";
         Map<String, String> values = Map.of("name", "Yurii");
@@ -22,7 +22,7 @@ public class TemplateEngineTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfPlaceholderValueIsMissing() {
+    void shouldThrowExceptionIfPlaceholderValueIsMissing() {
         TemplateEngine templateEngine = new TemplateEngine();
         String template = "Hello, #{name}!";
 
@@ -35,7 +35,7 @@ public class TemplateEngineTest {
     }
 
     @Test
-    public void shouldIgnoreExtraVariablesNotInTemplate() {
+    void shouldIgnoreExtraVariablesNotInTemplate() {
         TemplateEngine templateEngine = new TemplateEngine();
         String template = "Welcome, #{user}!";
         Map<String, String> values = Map.of(
@@ -46,5 +46,16 @@ public class TemplateEngineTest {
         String result = templateEngine.render(template, values);
 
         assertEquals("Welcome, Yurii!", result);
+    }
+
+    @Test
+    void shouldSupportValuesWithPlaceholderSyntaxInside() {
+        TemplateEngine templateEngine = new TemplateEngine();
+        String template = "Some text: #{value}!";
+        Map<String, String> values = Map.of("value", "#{tag}");
+
+        String result = templateEngine.render(template, values);
+
+        assertEquals("Some text: #{tag}!", result);
     }
 }
