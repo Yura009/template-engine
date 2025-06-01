@@ -33,4 +33,18 @@ public class TemplateEngineTest {
 
         assertEquals("Missing value for placeholder: name", exception.getMessage());
     }
+
+    @Test
+    public void shouldIgnoreExtraVariablesNotInTemplate() {
+        TemplateEngine templateEngine = new TemplateEngine();
+        String template = "Welcome, #{user}!";
+        Map<String, String> values = Map.of(
+                "user", "Yurii",
+                "unused", "something"
+        );
+
+        String result = templateEngine.render(template, values);
+
+        assertEquals("Welcome, Yurii!", result);
+    }
 }
