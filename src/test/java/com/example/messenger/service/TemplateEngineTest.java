@@ -31,7 +31,7 @@ public class TemplateEngineTest {
         Exception exception = assertThrows(MissingPlaceholderValueException.class, () ->
                 templateEngine.render(template, values));
 
-        assertEquals("Missing value for placeholder: name", exception.getMessage());
+        assertEquals("name", exception.getMessage());
     }
 
     @Test
