@@ -6,11 +6,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 public class TemplateEngineTest {
     TemplateEngine templateEngine = new TemplateEngine();
@@ -88,5 +90,20 @@ public class TemplateEngineTest {
 
         String result = templateEngine.render(template, values);
         assertEquals(expected, result);
+    }
+
+    @Test
+    void shouldMockRenderMethodPartially() {
+        TemplateEngine spyEngine = spy(templateEngine);
+
+        String template = "Hello, #{name}!";
+        Map<String, String> values = new HashMap<>();
+        values.put("name", "Yurii");
+
+        doReturn("Hi, Yurii!").when(spyEngine).render(template, values);
+
+        String result = spyEngine.render(template, values);
+        assertEquals("Hi, Yurii!", result);
+        verify(spyEngine, times(1)).render(template, values);
     }
 }
