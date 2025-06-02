@@ -2,17 +2,21 @@ package com.example.messenger.service;
 
 import com.example.messenger.exception.MissingPlaceholderValueException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TemplateEngineTest {
+    TemplateEngine templateEngine = new TemplateEngine();
 
     @Test
     void shouldReplacePlaceholderWithValue() {
-        TemplateEngine templateEngine = new TemplateEngine();
         String template = "Hello, #{name}!";
         Map<String, String> values = Map.of("name", "Yurii");
 
@@ -23,7 +27,6 @@ public class TemplateEngineTest {
 
     @Test
     void shouldThrowExceptionIfPlaceholderValueIsMissing() {
-        TemplateEngine templateEngine = new TemplateEngine();
         String template = "Hello, #{name}!";
 
         Map<String, String> values = Map.of();
@@ -36,7 +39,6 @@ public class TemplateEngineTest {
 
     @Test
     void shouldIgnoreExtraVariablesNotInTemplate() {
-        TemplateEngine templateEngine = new TemplateEngine();
         String template = "Welcome, #{user}!";
         Map<String, String> values = Map.of(
                 "user", "Yurii",
@@ -50,7 +52,6 @@ public class TemplateEngineTest {
 
     @Test
     void shouldSupportValuesWithPlaceholderSyntaxInside() {
-        TemplateEngine templateEngine = new TemplateEngine();
         String template = "Some text: #{value}!";
         Map<String, String> values = Map.of("value", "#{tag}");
 
@@ -61,15 +62,31 @@ public class TemplateEngineTest {
 
     @Test
     void shouldSupportLatin1CharactersInTemplateAndValues() {
-        TemplateEngine engine = new TemplateEngine();
         String template = "Hola señor #{name}, ¿cómo está? Su símbolo es #{symbol}";
         Map<String, String> values = Map.of(
                 "name", "Jürgen",
                 "symbol", "©"
         );
 
-        String result = engine.render(template, values);
+        String result = templateEngine.render(template, values);
 
         assertEquals("Hola señor Jürgen, ¿cómo está? Su símbolo es ©", result);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "'Hello, #{name}!', name=Yana, 'Hello, Yana!'",
+            "'Value: #{val}', val=123, 'Value: 123'",
+            "'Multiple: #{a} and #{b}', a=foo;b=bar, 'Multiple: foo and bar'",
+            "'No placeholders', '', 'No placeholders'"
+    })
+    void shouldRenderParameterizedInputs(String template, String vars, String expected) {
+        Map<String, String> values = vars.isEmpty() ? Map.of() :
+                Arrays.stream(vars.split(";"))
+                        .map(s -> s.split("="))
+                        .collect(Collectors.toMap(a -> a[0], a -> a[1]));
+
+        String result = templateEngine.render(template, values);
+        assertEquals(expected, result);
     }
 }
