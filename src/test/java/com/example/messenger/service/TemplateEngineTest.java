@@ -2,6 +2,8 @@ package com.example.messenger.service;
 
 import com.example.messenger.exception.MissingPlaceholderValueException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -105,5 +107,16 @@ public class TemplateEngineTest {
         String result = spyEngine.render(template, values);
         assertEquals("Hi, Yurii!", result);
         verify(spyEngine, times(1)).render(template, values);
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void shouldRunOnlyOnWindows() {
+        String template = "Windows: #{value}!";
+        Map<String, String> values = Map.of("value", "#{tag}");
+
+        String result = templateEngine.render(template, values);
+
+        assertEquals("Windows: #{tag}!", result);
     }
 }
