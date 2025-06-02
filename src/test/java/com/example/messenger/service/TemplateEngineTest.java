@@ -116,7 +116,6 @@ public class TemplateEngineTest {
         Map<String, String> values = Map.of("value", "#{tag}");
 
         String result = templateEngine.render(template, values);
-
         assertEquals("Windows: #{tag}!", result);
     }
 }

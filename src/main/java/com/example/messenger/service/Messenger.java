@@ -27,11 +27,11 @@ public class Messenger {
                 break;
             }
 
-            String[] parts = input.split("=", 2);
+            String[] parts = input.split("=");
             if (parts.length == 2) {
                 values.put(parts[0], parts[1]);
             } else {
-                out.println("Invalid input, should be key=value");
+                err.println("Invalid input, should be key=value");
             }
         }
 
@@ -64,14 +64,14 @@ public class Messenger {
 
             Files.writeString(Path.of(outputPath), result);
 
-        } catch (MissingPlaceholderValueException e) {
+        } catch (MissingPlaceholderValueException ex) {
             try {
-                Files.writeString(Path.of(outputPath), "Error: missing value for " + e.getMessage());
+                Files.writeString(Path.of(outputPath), "Error: missing value for " + ex.getMessage());
             } catch (IOException ioException) {
                 throw new RuntimeException(ioException);
             }
-        } catch (IOException e) {
-            throw new RuntimeException("File error: " + e.getMessage(), e);
+        } catch (IOException ex) {
+            throw new RuntimeException("File error: " + ex.getMessage(), ex);
         }
     }
 }

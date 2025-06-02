@@ -21,12 +21,16 @@ public class MessengerConsoleModeTest {
     Scanner scanner;
     ByteArrayOutputStream outContent;
     ByteArrayOutputStream errContent;
+    PrintStream outStream;
+    PrintStream errStream;
     Messenger messenger;
 
     @BeforeEach
     void setup() {
         outContent = new ByteArrayOutputStream();
         errContent = new ByteArrayOutputStream();
+        outStream = new PrintStream(outContent);
+        errStream = new PrintStream(errContent);
         messenger = new Messenger(new TemplateEngine());
     }
 
@@ -37,13 +41,29 @@ public class MessengerConsoleModeTest {
                 "user=Yurii",
                 "end"
         );
-        messenger.runConsoleMode(scanner, new PrintStream(outContent), new PrintStream(errContent));
+        messenger.runConsoleMode(scanner, outStream, errStream);
 
-        String output = outContent.toString().trim();
+        String output = outContent.toString();
         assertTrue(output.contains("Hello, Yurii!"), "Output should contain rendered result");
 
-        String error = errContent.toString().trim();
+        String error = errContent.toString();
         assertTrue(error.isEmpty(), "Error output should be empty");
+    }
+
+    @Test
+    void shouldWriteErrorToConsoleWhenInvalidInput() {
+        when(scanner.nextLine()).thenReturn(
+                "Hello, #{user}!",
+                "user=Yurii=unnecessary",
+                "end"
+        );
+        messenger.runConsoleMode(scanner, outStream, errStream);
+
+        String output = outContent.toString();
+        assertFalse(output.contains("Hello, Yurii!"), "Output should contain rendered result");
+
+        String error = errContent.toString();
+        assertTrue(error.contains("Invalid input, should be key=value"));
     }
 
     @Test
@@ -52,7 +72,7 @@ public class MessengerConsoleModeTest {
                 "Hello, #{user}!",
                 "end"
         );
-        messenger.runConsoleMode(scanner, new PrintStream(outContent), new PrintStream(errContent));
+        messenger.runConsoleMode(scanner, outStream, errStream);
 
         String output = outContent.toString();
         assertFalse(output.contains("Result:"));
