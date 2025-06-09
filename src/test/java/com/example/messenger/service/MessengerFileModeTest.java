@@ -69,7 +69,7 @@ public class MessengerFileModeTest {
                     messenger.runFileMode("input.txt", "output.txt")
             );
 
-            assertTrue(ex.getMessage().contains("File error"));
+            assertEquals("File error: Disk error", ex.getMessage());
         }
     }
 

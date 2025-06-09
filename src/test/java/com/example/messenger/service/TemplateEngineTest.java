@@ -79,7 +79,7 @@ public class TemplateEngineTest {
 
     @ParameterizedTest
     @CsvSource({
-            "'Hello, #{name}!', name=Yana, 'Hello, Yana!'",
+            "'Hello, #{name}!', name=Yurii, 'Hello, Yurii!'",
             "'Value: #{val}', val=123, 'Value: 123'",
             "'Multiple: #{a} and #{b}', a=foo;b=bar, 'Multiple: foo and bar'",
             "'No placeholders', '', 'No placeholders'"

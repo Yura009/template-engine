@@ -14,7 +14,7 @@ class TemplateEngineWithFileLoggingTest {
     @Test
     void shouldRenderSimpleTemplate() {
         TemplateEngine templateEngine = new TemplateEngine();
-        String result = templateEngine.render("Hello, #{name}!", Map.of("name", "Yana"));
-        assertEquals("Hello, Yana!", result);
+        String result = templateEngine.render("Hello, #{name}!", Map.of("name", "Yurii"));
+        assertEquals("Hello, Yurii!", result);
     }
 }
